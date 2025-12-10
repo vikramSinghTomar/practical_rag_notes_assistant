@@ -1,0 +1,37 @@
+[project]
+name = "practical-rag-notes-assistant"
+version = "0.1.0"
+description = "A small, practical Retrieval-Augmented Generation assistant over your local notes."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Vikram Singh Tomar" }
+]
+dependencies = [
+  "openai>=1.30.0",
+  "python-dotenv>=1.0.1",
+  "pydantic>=2.7.0",
+  "sentence-transformers>=2.6.0",
+  "faiss-cpu>=1.8.0",
+  "pypdf>=4.2.0",
+  "pyyaml>=6.0.1",
+  "rich>=13.7.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+dev-dependencies = [
+  "pytest>=8.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+

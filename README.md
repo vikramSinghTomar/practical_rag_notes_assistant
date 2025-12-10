@@ -1,0 +1,100 @@
+## Practical RAG Notes Assistant
+
+A small, practical Retrieval-Augmented Generation (RAG) assistant that runs over your local notes (Markdown and PDF).
+
+The goal is **clarity over magic**: the implementation is straightforward and transparent, without hidden framework complexity.
+
+### What this project does
+
+- **Ingests** Markdown (`.md`) and PDF (`.pdf`) files from a local `data/` folder.
+- **Chunks** documents into overlapping text chunks with basic metadata.
+- **Builds an embedding index** using a SentenceTransformer model and FAISS.
+- **Answers questions** by:
+  - retrieving the most relevant chunks for a query, and
+  - calling an OpenAI chat model with those chunks as context.
+
+It is intentionally small and focused so you can extend it with your own ideas (better chunking, reranking, evaluation, UI, etc.).
+
+### Project structure
+
+- `pyproject.toml` – project metadata and dependencies (compatible with `uv`).
+- `src/practical_rag_notes_assistant/`
+  - `config.py` – configuration models and loader.
+  - `ingest.py` – document loading and chunking.
+  - `index.py` – building and loading the FAISS index.
+  - `query.py` – retrieval + LLM-powered answer.
+  - `cli.py` – simple command-line interface.
+- `data/` – put your `.md` and `.pdf` notes here.
+
+### Quickstart
+
+#### 1. Create and activate an environment
+
+Using **uv** (recommended):
+
+```bash
+cd practical_rag_notes_assistant
+uv venv
+uv sync
+```
+
+Or with plain **pip**:
+
+```bash
+cd practical_rag_notes_assistant
+python -m venv .venv
+.\.venv\Scripts\activate  # on Windows
+pip install -e .
+```
+
+#### 2. Configure OpenAI and models
+
+Create a `.env` file in the project root:
+
+```bash
+OPENAI_API_KEY=sk-...
+```
+
+Then create a `config.yaml`:
+
+```yaml
+data_dir: "data"
+index_dir: "index"
+embedding_model_name: "sentence-transformers/all-MiniLM-L6-v2"
+openai_model: "gpt-4o-mini"
+top_k: 5
+max_context_chars: 6000
+```
+
+#### 3. Add some notes
+
+Create a `data/` folder (if it doesn't exist) and drop in:
+
+- your own `.md` notes, or
+- downloaded PDFs (papers, blog posts, reports).
+
+#### 4. Build the index
+
+From the project root:
+
+```bash
+python -m practical_rag_notes_assistant.cli ingest
+```
+
+This will:
+
+- load and chunk your documents,
+- compute embeddings,
+- build a FAISS index in the `index/` folder.
+
+#### 5. Ask questions
+
+```bash
+python -m practical_rag_notes_assistant.cli ask "What does the paper say about contrastive learning?"
+```
+
+You should see:
+
+- a short answer from the model,
+- a list of retrieved chunks (with file names and scores).
+
